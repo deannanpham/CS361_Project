@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fd9acf;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            padding: 20px;
+            text-align: center;
+            font-size: 30px;
+            flex-shrink: 0;
+        }
+
+        .image-container {
+            position: relative;
+            width: 1000px; 
+            height: 1000px; 
+            margin-top: 20px;
+            background-image: url('/static/images/cat.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-text {
+            position: absolute;
+            top: 15%;
+            width: 100%;
+            text-align: center;
+            font-size: 40px;
+            font-weight: bold;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+
+            background-color: rgb(0, 0, 0);
+            color: white; 
+            padding: 10px 20px;
+            border-radius: 8px;
+            max-width: 50%;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .buttons-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 400px;
+        }
+
+        .button {
+            padding: 12px 24px;
+            font-size: 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background-color: #000000;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #c1ff72;
+            color: black;
+        }
+
+        .about {
+          margin-top: 30px;
+          margin-left: 400px;
+          font-style: italic;
+          font-size: 24px;
+          color: #000000cc; 
+          text-align: center;
+          max-width: 600px;
+          padding: 0 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to the period tracking web app of your dreams!</h1>
+    </header>
+
+    <div class="image-container">
+        <p class="top-text">Create an account or log in to continue:</p>
+
+        <div class="buttons-container">
+            <a href="/register" class="button">Create Account</a>
+            <a href="/login" class="button">Log In</a>
+        </div>
+    </div>
+
+    <div class="about">
+      <em>"Keep track of your menstrual cycle and log your symptoms, moods, and health on 
+        a daily basis. Get wellness recommendations and predictions for your upcoming cycle!"</em>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="list-style-type: none; color: red; text-align: center;">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+</body>
+</html>

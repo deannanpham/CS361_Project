@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            margin: 20px;
+            }
+        nav {
+            margin-bottom: 20px;
+        }
+
+        .nav-button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+        }
+        .large-calendar, .side-calendars {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+        .large-calendar {
+            flex: 2;
+        }
+        .side-calendars {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            width: 14.28%;
+            text-align: center;
+            padding: 6px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #eee;
+        }
+        .logged-day {
+            background-color: #ffb3b3;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+        .mini-calendar {
+            font-size: 12px;
+        }
+        .notes-section {
+            margin-top: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+        }
+        input[type="submit"] {
+            margin-top: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ current_month_name }} {{ current_year }}</h1>
+
+    <nav>
+        <a href="{{ url_for('home') }}" class="nav-button">Home</a>
+        <a href="{{ url_for('date_log') }}" class="nav-button">Date Logging</a>
+        <a href="{{ url_for('calendar_page') }}" class="nav-button">Calendar</a>
+        <a href="{{ url_for('logout') }}" class="nav-button">Logout</a>
+    </nav>
+
+    <div class="container">
+        <div class="large-calendar">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in current_cal %}
+                    <tr>
+                        {% for day in week %}
+                            {% if day.day == 0 %}
+                                <td></td>
+                            {% elif day.is_logged %}
+                                <td class="logged-day">{{ day.day }}</td>
+                            {% else %}
+                                <td>{{ day.day }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="side-calendars">
+            {% for mini in mini_cals %}
+            <div class="mini-calendar">
+                <h4>{{ mini.name }} {{ mini.year }}</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for week in mini.calendar %}
+                        <tr>
+                            {% for day in week %}
+                                {% if day.day == 0 %}
+                                    <td></td>
+                                {% elif day.is_logged %}
+                                    <td class="logged-day">{{ day.day }}</td>
+                                {% else %}
+                                    <td>{{ day.day }}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+
+            <div class="notes-section">
+                <h4>Notes</h4>
+                <form method="POST">
+                    <textarea name="note" placeholder="Add your notes here...">{{ notes }}</textarea>
+                    <br>
+                    <input type="submit" value="Save Notes">
+                </form>
+            </div>
+
+            <div class="add-date-section" style="margin-top: 20px;">
+                <h4>Quick Add Date</h4>
+                <form method="POST" action="{{ url_for('calendar_page') }}">
+                    <label for="new_date">Date (MM/DD/YYYY):</label><br>
+                    <input type="text" name="new_date" placeholder="e.g. 08/01/2025" required><br><br>
+
+                    <label for="new_symptom">Symptom (optional):</label><br>
+                    <input type="text" name="new_symptom" placeholder="e.g. cramps, fatigue"><br><br>
+
+                    <input type="submit" value="Add Date">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: green;">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>

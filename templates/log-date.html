@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Date Logging</title>
+    <style>
+        .nav-button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .nav-button:hover {
+            background-color: #45a049;
+        }
+        form.inline-form {
+            display: inline;
+        }
+        button.delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        button.delete-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h1>Date Logging for Your Current Cycle</h1>
+
+    <nav>
+        <a href="{{ url_for('home') }}" class="nav-button">Home</a>
+        <a href="{{ url_for('date_log') }}" class="nav-button">Date Logging</a>
+        <a href="{{ url_for('calendar_page') }}" class="nav-button">Calendar</a>
+        <a href="{{ url_for('logout') }}" class="nav-button">Logout</a>
+    </nav>
+
+    {% if start_date and end_date %}
+        <p><strong>Current Cycle:</strong> {{ start_date }} to {{ end_date }}</p>
+    {% else %}
+        <p><strong>No cycle data logged yet.</strong></p>
+    {% endif %}
+
+    {% if logs %}
+        <h3>Logged Dates and Symptoms:</h3>
+        <ul>
+            {% for entry in logs %}
+                <li>
+                    {{ entry['date'] }}{% if entry['symptom'] %} - Symptom: {{ entry['symptom'] }}{% endif %}
+                    <a href="{{ url_for('edit_log', index=loop.index0) }}">Edit</a>
+                    <!-- Delete button -->
+                    <form method="POST" action="{{ url_for('remove_log', index=loop.index0) }}" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <hr>
+
+    <h2>Log a New Date & Symptom</h2>
+    <form method="POST">
+        <label for="date">Date (MM/DD/YYYY):</label><br>
+        <input type="text" id="date" name="date" placeholder="MM/DD/YYYY" required><br><br>
+
+        <label for="symptom">Symptom (optional):</label><br>
+        <input type="text" id="symptom" name="symptom" placeholder="e.g. headache, cramps"><br><br>
+
+        <input type="submit" value="Log Date">
+    </form>
+
+    <hr>
+
+    <h2>Remove Currently Logged Dates</h2>
+    <form method="POST" action="{{ url_for('remove_logs') }}"
+        onsubmit="return confirm('Are you sure you want to remove your logged dates for this current cycle? **Removal will result in loss of data**')">
+        <input type="submit" value="Remove Currently Logged Dates"
+           style="background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+    </form>
+
+    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: green;">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>
